@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Flores Amarillas</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: black;
+      overflow: hidden;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    /* --- Fondo de estrellas --- */
+    .stars {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      animation: twinkle 2s infinite alternate;
+    }
+    @keyframes twinkle {
+      from { opacity: 0.2; }
+      to { opacity: 1; }
+    }
+
+    /* --- Flor --- */
+    .flower {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+    }
+    .petal {
+      position: absolute;
+      width: 25px;
+      height: 25px;
+      background: yellow;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform-origin: center center;
+      box-shadow: 0 0 15px yellow;
+      animation: glow 1.5s infinite alternate;
+    }
+    @keyframes glow {
+      from { box-shadow: 0 0 8px yellow; }
+      to   { box-shadow: 0 0 18px yellow; }
+    }
+    .center {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: white;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2;
+    }
+    .stem {
+      position: absolute;
+      width: 3px;
+      height: 60px;
+      background: linear-gradient(to bottom, #4A7C2A, #2D5016);
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: -1;
+    }
+
+    /* --- Pétalos cayendo --- */
+    .falling-petal {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background: yellow;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(45deg);
+      opacity: 0.9;
+      animation: fall linear forwards;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+    }
+
+    /* --- Estrella fugaz --- */
+    .shooting-star {
+      position: absolute;
+      width: 150px;
+      height: 2px;
+      background: linear-gradient(90deg, white, transparent);
+      opacity: 0.9;
+      transform: rotate(-30deg);
+      animation: shoot 1.5s ease-out forwards;
+    }
+    @keyframes shoot {
+      from { transform: translateX(-200px) translateY(0) rotate(-30deg); opacity: 1; }
+      to   { transform: translateX(100vw) translateY(100vh) rotate(-30deg); opacity: 0; }
+    }
+
+    /* --- Mensajes --- */
+    .message {
+      position: absolute;
+      top: 20%;
+      width: 100%;
+      text-align: center;
+      color: #FFD700;
+      font-size: 26px;
+      font-weight: bold;
+      opacity: 0;
+      animation: fadeIn 0.5s ease forwards;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.8); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* --- Marca de agua --- */
+    .watermark {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      color: white;
+      font-size: 16px;
+      font-style: italic;
+      opacity: 0.8;
+    }
+
+    /* --- Ajustes móviles --- */
+    @media (max-width: 600px) {
+      .flower { width: 40px; height: 40px; }
+      .petal { width: 20px; height: 20px; }
+      .center { width: 10px; height: 10px; }
+      .stem { height: 45px; }
+      .message { font-size: 18px; top: 15%; }
+      .watermark { font-size: 13px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+  <div class="watermark">De A para ti sarahi <3 &lt;3</div>
+
+<script>
+  // --- estrellas fijas ---
+  const starsContainer = document.querySelector(".stars");
+  for (let i = 0; i < 100; i++) {
+    const star = document.createElement("div");
+    star.className = "star";
+    star.style.top = Math.random() * 100 + "%";
+    star.style.left = Math.random() * 100 + "%";
+    star.style.animationDuration = (1 + Math.random() * 2) + "s";
+    starsContainer.appendChild(star);
+  }
+
+  // --- flores ---
+  let centerX = window.innerWidth / 2;
+  let centerY = window.innerHeight / 1.6;
+  let radius = window.innerWidth < 600 ? 80 : 110; // ✅ más compacto en móviles
+  const flowerCount = 7;
+
+  function createFlower(x, y) {
+    const flower = document.createElement("div");
+    flower.className = "flower";
+    flower.style.left = x + "px";
+    flower.style.top = y + "px";
+
+    // pétalos distribuidos en círculo
+    for (let i = 0; i < 5; i++) {
+      const petal = document.createElement("div");
+      petal.className = "petal";
+      petal.style.transform = `translate(-50%, -50%) rotate(${i * 72}deg) translate(18px)`;
+      flower.appendChild(petal);
+    }
+
+    const center = document.createElement("div");
+    center.className = "center";
+    flower.appendChild(center);
+
+    const stem = document.createElement("div");
+    stem.className = "stem";
+    flower.appendChild(stem);
+
+    document.body.appendChild(flower);
+  }
+
+  for (let i = 0; i < flowerCount; i++) {
+    const angle = (i / flowerCount) * Math.PI * 2;
+    const x = centerX + radius * Math.cos(angle) - 25;
+    const y = centerY + radius * Math.sin(angle) - 25;
+    createFlower(x, y);
+  }
+
+  // --- pétalos cayendo ---
+  function createPetal() {
+    const petal = document.createElement("div");
+    petal.className = "falling-petal";
+    petal.style.left = Math.random() * 100 + "vw";
+    petal.style.animationDuration = (5 + Math.random() * 5) + "s";
+    document.body.appendChild(petal);
+    setTimeout(() => petal.remove(), 10000);
+  }
+  setInterval(createPetal, 400);
+
+  // --- estrellas fugaces ---
+  function createShootingStar() {
+    const star = document.createElement("div");
+    star.className = "shooting-star";
+    star.style.top = Math.random() * 50 + "vh";
+    document.body.appendChild(star);
+    setTimeout(() => star.remove(), 2000);
+  }
+  setInterval(() => {
+    if (Math.random() > 0.7) createShootingStar();
+  }, 3000);
+
+  // --- frases ---
+  const frases = [
+    "Te quiero",
+    "Eres hermosa",
+    "Eres especial",
+    "Siempre contigo",
+    "Tu sonrisa ilumina",
+    "Eres mi sol en la oscuridad",
+    "Tu mirada me inspira",
+    "Gracias por existir",
+    "Eres única",
+    "Siempre en mi corazón",
+    "Tu luz ilumina mi vida"
+  ];
+  let activeMsg = null;
+
+  document.body.addEventListener("click", () => {
+    if (activeMsg) activeMsg.remove();
+    const msg = document.createElement("div");
+    msg.className = "message";
+    msg.textContent = frases[Math.floor(Math.random() * frases.length)];
+    document.body.appendChild(msg);
+    activeMsg = msg;
+  });
+</script>
+</body>
+</html>
